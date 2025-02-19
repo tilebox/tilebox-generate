@@ -1,4 +1,4 @@
-module github.com/tilebox/tilebox-cli
+module github.com/tilebox/tilebox-generate
 
 go 1.23.4
 

@@ -11,7 +11,7 @@
   <a href="https://tilebox.com/discord"><b>Discord</b></a>
 </p>
 
-# Tilebox Datasets CLI
+# Tilebox Generate
 
 CLI tool to generate Tilebox datasets types for Go. It is intended be used alongside [tilebox-go](https://github.com/tilebox/tilebox-go).
 
