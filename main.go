@@ -1,3 +1,6 @@
+// Package tilebox-generate is a CLI tool to generate Tilebox datasets types for Go.
+//
+// Usage: tilebox-generate --dataset open_data.copernicus.sentinel1_sar
 package main
 
 import (
