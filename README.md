@@ -18,31 +18,31 @@ CLI tool to generate Tilebox datasets types for Go. It is intended be used along
 ## Installation
 
 ```bash
-go install github.com/tilebox/tilebox-datasets-cli@latest
+go install github.com/tilebox/tilebox-generate@latest
 ```
 
 ## Examples
 
-Generate a dataset type for [Sentinel-1 SAR](https://docs.tilebox.com/datasets/open-data) dataset to `./protogen` using $TILEBOX_API_KEY api key
+Generate a dataset type for [Sentinel-1 SAR](https://docs.tilebox.com/datasets/open-data) dataset to `./protogen` using $TILEBOX_API_KEY api key:
 
 ```bash
-tilebox generate --dataset open_data.copernicus.sentinel1_sar
+tilebox-generate --dataset open_data.copernicus.sentinel1_sar
 ```
 
-Generate a dataset type for [Sentinel-1 SAR](https://docs.tilebox.com/datasets/open-data) dataset to `./protogen` using $TILEBOX_API_KEY api key
+Same as above, but override the output directory, package name and message name:
 
 ```bash
-tilebox generate --dataset open_data.copernicus.sentinel1_sar --out ./protogen --type tilebox.v1 --name {CamelCase codename}
+tilebox-generate --dataset open_data.copernicus.sentinel1_sar --out ./protogen --package tilebox.v1 --name MyDataset
 ```
 
 ## Usage
 
 ```
 NAME:
-   tilebox - Generate Tilebox datasets types for Go
+   tilebox-generate - Generate Tilebox datasets types for Go
 
 USAGE:
-   tilebox generate [global options]
+   tilebox-generate [global options]
 
 GLOBAL OPTIONS:
    --tilebox-api-key value  A Tilebox API key [$TILEBOX_API_KEY]
@@ -57,22 +57,24 @@ GLOBAL OPTIONS:
 
 Usage example to [load typed data](https://github.com/tilebox/tilebox-go/blob/main/examples/load/main.go) from Tilebox.
 
-To have typed custom datasets in Go you need to replace `tileboxdatasets.CollectAs` type with the generated one from `tilebox-cli`.
+To have typed custom datasets in Go you need to replace `tileboxdatasets.CollectAs` type with the generated one.
 
 ```go
 package main
 
 import (
-	tileboxv1 "path/to/protogen/tilebox/v1" // TODO: replace with your own path to the generated package
 	tileboxdatasets "github.com/tilebox/tilebox-go/datasets/v1"
 	"log"
+	// TODO: replace with your own path to the generated package
+	tileboxv1 "path/to/protogen/tilebox/v1"
 )
 
 func main() {
 	// ...
 
 	// Load data of my custom datasets
-	datapoints, err := tileboxdatasets.CollectAs[*tileboxv1.Sentinel1Sar](collection.Load(ctx, loadInterval)) // TODO: replace tileboxv1.Sentinel1Sar with your own dataset type
+	// TODO: replace tileboxv1.Sentinel1Sar with your own dataset type
+	datapoints, err := tileboxdatasets.CollectAs[*tileboxv1.Sentinel1Sar](collection.Load(ctx, loadInterval))
 	if err != nil {
 		log.Fatalf("Failed to load and collect datapoints: %v", err)
 	}

@@ -37,15 +37,12 @@ func pointer[T any](x T) *T {
 func main() {
 	ctx := context.Background()
 
-	if len(os.Args) == 1 || os.Args[1] != "generate" {
+	if len(os.Args) == 1 {
 		os.Args = append(os.Args, "--help")
-	} else {
-		os.Args = os.Args[1:] // remove "generate" from the args
 	}
-
 	cfg := &Config{}
 	structconf.MustLoadAndValidate(cfg,
-		"tilebox generate",
+		"tilebox-generate",
 		structconf.WithDescription("Generate Tilebox datasets types for Go"),
 	)
 
