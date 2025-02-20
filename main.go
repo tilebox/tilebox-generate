@@ -5,6 +5,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log/slog"
 	"os"
@@ -49,9 +50,7 @@ func main() {
 		structconf.WithDescription("Generate Tilebox datasets types for Go"),
 	)
 
-	client := tileboxdatasets.NewClient(
-		tileboxdatasets.WithAPIKey(cfg.TileboxAPIKey),
-	)
+	client := tileboxdatasets.NewClient(tileboxdatasets.WithAPIKey(cfg.TileboxAPIKey))
 	dataset, err := client.Dataset(ctx, cfg.Dataset)
 	if err != nil {
 		slog.ErrorContext(ctx, "failed to get dataset", slog.Any("error", err))
@@ -74,8 +73,7 @@ func main() {
 		fmt.Sprintf("%s.proto", datasetFileDescriptor.GetMessageType()[0].GetName()),
 	))
 
-	// protoplugin validates the request
-	request, err := protoplugin.NewRequest(&pluginpb.CodeGeneratorRequest{
+	request := &pluginpb.CodeGeneratorRequest{
 		FileToGenerate: []string{datasetFileDescriptor.GetName()},
 		ProtoFile: []*descriptorpb.FileDescriptorProto{
 			protodesc.ToFileDescriptorProto(durationpb.File_google_protobuf_duration_proto),
@@ -83,16 +81,32 @@ func main() {
 			protodesc.ToFileDescriptorProto(datasetsv1.File_datasets_v1_well_known_types_proto),
 			datasetFileDescriptor,
 		},
-	})
+	}
+	response, err := generateCode(request)
 	if err != nil {
-		slog.ErrorContext(ctx, "failed to create request", slog.Any("error", err))
+		slog.ErrorContext(ctx, "failed to generate code", slog.Any("error", err))
 		return
 	}
 
-	plugin, err := protogen.Options{}.New(request.CodeGeneratorRequest())
+	file := response.GetFile()[0] // we only generate one file
+	outputPath := filepath.Join(cfg.Out, file.GetName())
+	err = writeToDisk(outputPath, []byte(file.GetContent()))
 	if err != nil {
-		slog.ErrorContext(ctx, "failed to create plugin", slog.Any("error", err))
+		slog.ErrorContext(ctx, "failed to write file", slog.Any("error", err))
 		return
+	}
+	slog.Info("file written", slog.String("path", outputPath))
+}
+
+func generateCode(req *pluginpb.CodeGeneratorRequest) (*pluginpb.CodeGeneratorResponse, error) {
+	validatedRequest, err := protoplugin.NewRequest(req)
+	if err != nil {
+		return nil, fmt.Errorf("failed to validate request: %w", err)
+	}
+
+	plugin, err := protogen.Options{}.New(validatedRequest.CodeGeneratorRequest())
+	if err != nil {
+		return nil, fmt.Errorf("failed to create generator: %w", err)
 	}
 	for _, f := range plugin.Files {
 		if !f.Generate {
@@ -102,23 +116,21 @@ func main() {
 	}
 	response := plugin.Response()
 	if response.Error != nil {
-		slog.ErrorContext(ctx, "failed to generate files", slog.Any("error", response.GetError()))
-		return
+		return nil, fmt.Errorf("failed to generate files: %w", errors.New(response.GetError()))
 	}
 
-	file := response.GetFile()[0] // we only generate one file
-	err = os.MkdirAll(filepath.Join(cfg.Out, filepath.Dir(file.GetName())), 0o755)
+	return response, nil
+}
+
+func writeToDisk(outputPath string, content []byte) error {
+	err := os.MkdirAll(filepath.Dir(outputPath), 0o755)
 	if err != nil {
-		slog.ErrorContext(ctx, "failed to create output directory", slog.Any("error", err))
-		return
+		return fmt.Errorf("failed to create output directory: %w", err)
 	}
 
-	outputFile := filepath.Join(cfg.Out, file.GetName())
-	err = os.WriteFile(outputFile, []byte(file.GetContent()), 0o640) //nolint:gosec
+	err = os.WriteFile(outputPath, content, 0o640) //nolint:gosec
 	if err != nil {
-		slog.ErrorContext(ctx, "failed to write file", slog.Any("error", err))
-		return
+		return fmt.Errorf("failed to write file: %w", err)
 	}
-
-	slog.InfoContext(ctx, "file written", slog.String("path", outputFile))
+	return nil
 }
