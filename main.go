@@ -28,15 +28,14 @@ import (
 )
 
 type Config struct {
-	TileboxAPIKey string `validate:"required" help:"A Tilebox API key"`
-	Dataset       string `env:"-"             validate:"required"              help:"A valid dataset slug e.g. 'open_data.copernicus.sentinel1_sar'"`
-	Out           string `env:"-"             default:"protogen"               help:"A directory to write the output to"`
-	Package       string `env:"-"             default:"tilebox.v1"             help:"Package name"`
-	Name          string `env:"-"             help:"Override the message name"`
-}
+	Dataset string `env:"-" validate:"required" help:"A valid dataset slug e.g. 'open_data.copernicus.sentinel1_sar'"`
 
-func pointer[T any](x T) *T {
-	return &x
+	Out     string `env:"-" default:"protogen"                                      help:"The directory to generate output files in"`
+	Package string `env:"-" default:"tilebox.v1"                                    help:"Package name"`
+	Name    string `env:"-" help:"Protobuf message name for the dataset (optional)"`
+
+	TileboxAPIKey string `validate:"required"               help:"A Tilebox API key"`
+	TileboxAPIUrl string `default:"https://api.tilebox.com" validate:"required"      help:"The Tilebox API URL"`
 }
 
 func main() {
@@ -53,7 +52,7 @@ func main() {
 
 	client := tileboxdatasets.NewClient(
 		tileboxdatasets.WithAPIKey(cfg.TileboxAPIKey),
-		tileboxdatasets.WithURL("https://api.tilebox.dev"),
+		tileboxdatasets.WithURL(cfg.TileboxAPIUrl),
 		tileboxdatasets.WithHTTPClient(http.DefaultClient), // doesn't log requests
 	)
 	dataset, err := client.Dataset(ctx, cfg.Dataset)
@@ -138,4 +137,8 @@ func writeToDisk(outputPath string, content []byte) error {
 		return fmt.Errorf("failed to write file: %w", err)
 	}
 	return nil
+}
+
+func pointer[T any](x T) *T {
+	return &x
 }
