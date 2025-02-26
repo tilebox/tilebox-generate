@@ -5,7 +5,11 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	datasetsv1 "github.com/tilebox/tilebox-go/protogen/go/datasets/v1"
+	"google.golang.org/protobuf/reflect/protodesc"
 	"google.golang.org/protobuf/types/descriptorpb"
+	"google.golang.org/protobuf/types/known/durationpb"
+	"google.golang.org/protobuf/types/known/timestamppb"
 	"google.golang.org/protobuf/types/pluginpb"
 )
 
@@ -25,9 +29,12 @@ func Test_generateCode(t *testing.T) {
 				req: &pluginpb.CodeGeneratorRequest{
 					FileToGenerate: []string{"Dataset.proto"},
 					ProtoFile: []*descriptorpb.FileDescriptorProto{
+						protodesc.ToFileDescriptorProto(timestamppb.File_google_protobuf_timestamp_proto),
+						protodesc.ToFileDescriptorProto(durationpb.File_google_protobuf_duration_proto),
+						protodesc.ToFileDescriptorProto(datasetsv1.File_datasets_v1_well_known_types_proto),
 						{
 							Name:       pointer("Dataset.proto"),
-							Dependency: nil,
+							Dependency: []string{"datasets/v1/well_known_types.proto"},
 							MessageType: []*descriptorpb.DescriptorProto{
 								{
 									Name: pointer("Dataset"),
@@ -37,6 +44,13 @@ func Test_generateCode(t *testing.T) {
 											Number: pointer[int32](1),
 											Label:  pointer(descriptorpb.FieldDescriptorProto_LABEL_OPTIONAL),
 											Type:   pointer(descriptorpb.FieldDescriptorProto_TYPE_STRING),
+										},
+										{
+											Name:     pointer("nested_message"),
+											Number:   pointer[int32](2),
+											Label:    pointer(descriptorpb.FieldDescriptorProto_LABEL_OPTIONAL),
+											Type:     pointer(descriptorpb.FieldDescriptorProto_TYPE_MESSAGE),
+											TypeName: pointer(".datasets.v1.Vec3"),
 										},
 									},
 								},

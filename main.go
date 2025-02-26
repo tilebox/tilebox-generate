@@ -8,6 +8,7 @@ import (
 	"errors"
 	"fmt"
 	"log/slog"
+	"net/http"
 	"os"
 	"path"
 	"path/filepath"
@@ -50,7 +51,11 @@ func main() {
 		structconf.WithDescription("Generate Tilebox datasets types for Go"),
 	)
 
-	client := tileboxdatasets.NewClient(tileboxdatasets.WithAPIKey(cfg.TileboxAPIKey))
+	client := tileboxdatasets.NewClient(
+		tileboxdatasets.WithAPIKey(cfg.TileboxAPIKey),
+		tileboxdatasets.WithURL("https://api.tilebox.dev"),
+		tileboxdatasets.WithHTTPClient(http.DefaultClient), // doesn't log requests
+	)
 	dataset, err := client.Dataset(ctx, cfg.Dataset)
 	if err != nil {
 		slog.ErrorContext(ctx, "failed to get dataset", slog.Any("error", err))
