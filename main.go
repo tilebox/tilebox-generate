@@ -65,9 +65,10 @@ func main() {
 
 	if cfg.Package != "" {
 		datasetFileDescriptor.Package = &cfg.Package
-		datasetFileDescriptor.Options = &descriptorpb.FileOptions{
-			GoPackage: pointer(strings.ReplaceAll(datasetFileDescriptor.GetPackage(), ".", "/")),
+		if datasetFileDescriptor.Options == nil {
+			datasetFileDescriptor.Options = &descriptorpb.FileOptions{}
 		}
+		datasetFileDescriptor.Options.GoPackage = pointer(strings.ReplaceAll(datasetFileDescriptor.GetPackage(), ".", "/"))
 	}
 	if cfg.Name != "" {
 		datasetFileDescriptor.GetMessageType()[0].Name = &cfg.Name
