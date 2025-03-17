@@ -55,7 +55,7 @@ func main() {
 		tileboxdatasets.WithURL(cfg.TileboxAPIUrl),
 		tileboxdatasets.WithHTTPClient(http.DefaultClient), // doesn't log requests
 	)
-	dataset, err := client.Dataset(ctx, cfg.Dataset)
+	dataset, err := client.Datasets.Get(ctx, cfg.Dataset)
 	if err != nil {
 		slog.ErrorContext(ctx, "failed to get dataset", slog.Any("error", err))
 		return
