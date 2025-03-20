@@ -6,7 +6,7 @@ require (
 	github.com/bufbuild/protoplugin v0.0.0-20250218205857-750e09ce93e1
 	github.com/stretchr/testify v1.10.0
 	github.com/tilebox/structconf v0.0.0-20250317102242-55c61ceb3bf6
-	github.com/tilebox/tilebox-go v0.0.0-20250317084438-7878c146fe9a
+	github.com/tilebox/tilebox-go v0.0.0-20250318142437-9ce93ebe68f2
 	google.golang.org/protobuf v1.36.5
 )
 
