@@ -8,7 +8,6 @@ import (
 	"errors"
 	"fmt"
 	"log/slog"
-	"net/http"
 	"os"
 	"path"
 	"path/filepath"
@@ -53,7 +52,6 @@ func main() {
 	client := tileboxdatasets.NewClient(
 		tileboxdatasets.WithAPIKey(cfg.TileboxAPIKey),
 		tileboxdatasets.WithURL(cfg.TileboxAPIUrl),
-		tileboxdatasets.WithHTTPClient(http.DefaultClient), // doesn't log requests
 	)
 	dataset, err := client.Datasets.Get(ctx, cfg.Dataset)
 	if err != nil {
@@ -86,6 +84,7 @@ func main() {
 			protodesc.ToFileDescriptorProto(datasetsv1.File_datasets_v1_well_known_types_proto),
 			datasetFileDescriptor,
 		},
+		Parameter: pointer("default_api_level=API_OPAQUE"),
 	}
 	response, err := generateCode(request)
 	if err != nil {
