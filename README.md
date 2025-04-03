@@ -45,11 +45,12 @@ USAGE:
    tilebox-generate [global options]
 
 GLOBAL OPTIONS:
-   --tilebox-api-key value  A Tilebox API key [$TILEBOX_API_KEY]
    --dataset value          A valid dataset slug e.g. 'open_data.copernicus.sentinel1_sar'
-   --out value              A directory to write the output to (default: protogen)
+   --out value              The directory to generate output files in (default: protogen)
    --package value          Package name (default: tilebox.v1)
-   --name value             Override the message name
+   --name value             Protobuf message name for the dataset (optional)
+   --tilebox-api-key value  A Tilebox API key [$TILEBOX_API_KEY]
+   --tilebox-api-url value  The Tilebox API URL (default: https://api.tilebox.com) [$TILEBOX_API_URL]
    --help, -h               show help
 ```
 
