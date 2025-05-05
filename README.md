@@ -56,16 +56,18 @@ GLOBAL OPTIONS:
 
 ## Usage with tilebox-go
 
-Usage example to [load typed data](https://github.com/tilebox/tilebox-go/blob/main/examples/load/main.go) from Tilebox.
+Usage example to [query typed data](https://github.com/tilebox/tilebox-go/blob/main/examples/datasets/query/main.go) from Tilebox.
 
-To have typed custom datasets in Go you need to replace `tileboxdatasets.CollectAs` type with the generated one.
+To have typed datasets in Go you need to replace `datapoints` type with the generated one.
 
 ```go
 package main
 
 import (
-	tileboxdatasets "github.com/tilebox/tilebox-go/datasets/v1"
+	"github.com/google/uuid"
+	"github.com/tilebox/tilebox-go/datasets/v1"
 	"log"
+
 	// TODO: replace with your own path to the generated package
 	tileboxv1 "path/to/protogen/tilebox/v1"
 )
@@ -73,11 +75,15 @@ import (
 func main() {
 	// ...
 
-	// Load data of my custom datasets
+	// Perform a temporal query
 	// TODO: replace tileboxv1.Sentinel1Sar with your own dataset type
-	datapoints, err := tileboxdatasets.CollectAs[*tileboxv1.Sentinel1Sar](collection.Load(ctx, loadInterval))
+	var datapoints []*tileboxv1.Sentinel1Sar
+	err := client.Datapoints.QueryInto(ctx,
+		[]uuid.UUID{collection.ID}, &datapoints,
+		datasets.WithTemporalExtent(timeInterval),
+	)
 	if err != nil {
-		log.Fatalf("Failed to load and collect datapoints: %v", err)
+		log.Fatalf("Failed to query datapoints: %v", err)
 	}
 	_ = datapoints // now datapoints are typed using tileboxv1.Sentinel1Sar
 	
