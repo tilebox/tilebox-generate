@@ -54,6 +54,18 @@ GLOBAL OPTIONS:
    --help, -h               show help
 ```
 
+## Usage with go generate
+
+A handy way to generate the dataset types is to use `go generate`. Add the following to your `generate.go` file:
+
+```go
+package main
+
+//go:generate go run -mod=mod github.com/tilebox/tilebox-generate --dataset open_data.copernicus.sentinel1_sar
+```
+
+Then run `go generate ./...` to generate the dataset types.
+
 ## Usage with tilebox-go
 
 Usage example to [query typed data](https://github.com/tilebox/tilebox-go/blob/main/examples/datasets/query/main.go) from Tilebox.
