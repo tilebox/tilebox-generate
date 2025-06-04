@@ -61,7 +61,7 @@ A handy way to generate the dataset types is to use `go generate`. Add the follo
 ```go
 package main
 
-//go:generate go run -mod=mod github.com/tilebox/tilebox-generate --dataset open_data.copernicus.sentinel1_sar
+//go:generate go tool tilebox-generate --dataset open_data.copernicus.sentinel1_sar
 ```
 
 Then run `go generate ./...` to generate the dataset types.
