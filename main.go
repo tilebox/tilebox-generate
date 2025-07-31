@@ -16,7 +16,7 @@ import (
 	"github.com/bufbuild/protoplugin"
 	"github.com/tilebox/structconf"
 	tileboxdatasets "github.com/tilebox/tilebox-go/datasets/v1"
-	datasetsv1 "github.com/tilebox/tilebox-go/protogen/go/datasets/v1"
+	datasetsv1 "github.com/tilebox/tilebox-go/protogen/datasets/v1"
 	gengo "google.golang.org/protobuf/cmd/protoc-gen-go/internal_gengo"
 	"google.golang.org/protobuf/compiler/protogen"
 	"google.golang.org/protobuf/reflect/protodesc"
