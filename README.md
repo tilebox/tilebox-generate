@@ -13,6 +13,11 @@
 
 # Tilebox Generate
 
+> [!WARNING]
+> Tilebox Generate is no longer supported. Use the [Tilebox CLI](https://github.com/tilebox/cli), which supersedes this tool without loss of functionality.
+>
+> See the [Tilebox CLI getting-started guide](https://docs.tilebox.com/agents-and-ai-tools/tilebox-cli) for installation and usage instructions.
+
 CLI tool to generate Tilebox datasets types for Go. It is intended be used alongside [tilebox-go](https://github.com/tilebox/tilebox-go).
 
 ## Installation
